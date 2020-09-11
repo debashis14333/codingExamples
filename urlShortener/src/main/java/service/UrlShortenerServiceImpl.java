@@ -2,6 +2,7 @@ package service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import pojos.URL;
 import serviceapi.TokenService;
@@ -14,7 +15,7 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 	private static final int SHORT_URL_LENGTH = 8;
 	private static final String SHORT_URL_DOMAIN = "http://tinyUrl.in/";
 
-	private static long currentToken;
+	private static AtomicLong currentToken;
 	private TokenService tokenService;
 	private Map<String, URL> shortUrlToURLMap;
 	private Map<String, String> clientIdLongUrlToShortUrlMap;
@@ -23,7 +24,7 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 		shortUrlToURLMap = new HashMap();
 		clientIdLongUrlToShortUrlMap = new HashMap();
 		tokenService = new TokenServiceImpl();
-		currentToken = tokenService.getTokenRange(SERVER_ID);
+		currentToken.set(tokenService.getTokenRange(SERVER_ID));
 	}
 
 	@Override
@@ -41,30 +42,31 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 				shortUrlToURLMap.put(shortURL, url);
 				clientIdLongUrlToShortUrlMap.put(queryId, shortURL);
 			}
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 		return SHORT_URL_DOMAIN + shortURL;
 	}
 
-
 	private long getNextToken() {
-		if (currentToken % 10 == 0) {
-			currentToken = tokenService.getTokenRange(SERVER_ID);
+		if (currentToken.get() % 10 == 0) {
+			refreshCurrentToken();
 		}
-		return currentToken++;
+		return currentToken.getAndIncrement();
+	}
+
+	synchronized private void refreshCurrentToken() {
+		if (currentToken.get() % 10 == 0) {
+			currentToken.set(tokenService.getTokenRange(SERVER_ID));
+		}
 	}
 
 	@Override
 	public String getOriginalURL(String shortURL) {
 		// TODO Auto-generated method stub
-		if(validateShortURL(shortURL, SHORT_URL_DOMAIN))
-		{
+		if (validateShortURL(shortURL, SHORT_URL_DOMAIN)) {
 			String url = sanitizeShortURL(shortURL, SHORT_URL_DOMAIN);
-			if(shortUrlToURLMap.containsKey(url))
-			{
+			if (shortUrlToURLMap.containsKey(url)) {
 				URL urlObject = shortUrlToURLMap.get(url);
 				urlObject.increaseHitCount();
 				return urlObject.getLongURL();
@@ -76,11 +78,9 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
 	@Override
 	public int getHitCount(String shortURL) {
 		// TODO Auto-generated method stub
-		if(validateShortURL(shortURL, SHORT_URL_DOMAIN))
-		{
+		if (validateShortURL(shortURL, SHORT_URL_DOMAIN)) {
 			String url = sanitizeShortURL(shortURL, SHORT_URL_DOMAIN);
-			if(shortUrlToURLMap.containsKey(url))
-			{
+			if (shortUrlToURLMap.containsKey(url)) {
 				return shortUrlToURLMap.get(url).getHitCount();
 			}
 		}
