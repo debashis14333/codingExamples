@@ -1,0 +1,17 @@
+1. Debshis Bhowmick <debashis14333@gmail.com>
+
+2. Issues with creating a new local module & check it into Git.
+----------------------------------------------------------------
+
+i. Open eclipse. Right click on left panel and create a maven module with simple arch-type. Create a simple class and run it. 
+
+ii. Then, right click on the project, Click on properties. Change the JDK-version in the build path. Select work-space default. Remove other folders from "source" in build path; because only src/main/java is required. 
+
+    Then, go to Compiler-option. Select 11. Click apply & close.
+
+iii. Since, the project is created in eclipse workspace, now we need to share it to git. So that, the project content gets copied to local git folder. So, right click on the project in eclipse, click on team->Share Project. Select the local repo path. check the source & destination paths here. Click ok. 
+
+iv. Now, running the project will fail, as it's contents are moved to git folder. So, delete the project from eclipse (DO NOT select, "delete project contents from disk"). Now, import a new git proect in eclipse, select from the existing local repo only this project. Now, it will be imported into eclipse from this new path(git repo path). Now, the project will Run. Then,just commit and push the changes from git-stating area.
+
+
+
