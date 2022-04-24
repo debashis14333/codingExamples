@@ -29,7 +29,7 @@ public class JavaObjectSorting {
         System.out.println(Arrays.toString(strArr));
         
         //sorting list of objects of Wrapper classes
-        List<String> strList = new ArrayList<String>();
+        List<String> strList = new ArrayList<>();
         strList.add("A");
         strList.add("C");
         strList.add("B");

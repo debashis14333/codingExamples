@@ -1,6 +1,7 @@
 package collectionsexample;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ArrayListExample {
@@ -23,8 +24,14 @@ public class ArrayListExample {
 		arrayList.remove(2);
 		arrayList.add(2, 18);
 		System.out.println("ArrayList size = " + arrayList.size());
-		System.out.println("ArrayList Content = " + arrayList);
-		
+		System.out.println("ArrayList Content normal = " + arrayList);
+		System.out.println("ArrayList Content toString()= " + arrayList.toString());
+		System.out.println("ArrayList 4th element= " + arrayList.get(3));
+			
+		Integer[] arr = new Integer[arrayList.size()];
+		arr = arrayList.toArray(arr);
+		System.out.println("Array Content = " + Arrays.toString(arr));
+		//List<Integer> arrayList
 	}
 
 }

@@ -22,6 +22,18 @@ public class MeetingRoomProb {
 		}
 		return  minHeap.size();
 	}
+	
+	public int getMinMeetingRooms(int[][] intervals) {
+	    Arrays.sort(intervals, (a, b) -> (a[0] == b[0] ? (a[1] - b[1]) : (a[0] - b[0])));
+	    PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
+	    for (int[] i : intervals) {
+	        if (!queue.isEmpty() && queue.peek() <= i[0])
+	            queue.poll();
+	        queue.add(i[1]);
+	    }
+	    return queue.size();
+	}
+
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
